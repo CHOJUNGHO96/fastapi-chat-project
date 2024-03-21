@@ -1,10 +1,9 @@
 from fastapi import APIRouter
 
-from app.auth.endpoint.login import router as login
-
-from app.chat.endpoint.chat import router as chat
+from app.auth.routes import auth_api_router
+from app.chat.routes import chat_api_router
 
 router = APIRouter()
 
-router.include_router(login, prefix="/auth", tags=["로그인"])
-router.include_router(chat, prefix="/chat", tags=["채팅"])
+router.include_router(auth_api_router, prefix="/auth")
+router.include_router(chat_api_router, prefix="/chat")

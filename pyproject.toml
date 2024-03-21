@@ -24,7 +24,7 @@ mypy = "^1.7.1"
 orjson = "^3.9.10"
 passlib = "^1.7.4"
 pre-commit = "^3.6.2"
-pydantic = "^2.5.2"
+pydantic = {extras = ["email"], version = "^2.6.4"}
 pydantic-core = "^2.14.5"
 pydantic-settings = "^2.1.0"
 python = "^3.11"

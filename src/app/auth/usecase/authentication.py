@@ -3,14 +3,19 @@ from dependency_injector.wiring import Provide, inject
 from fastapi import Request
 from passlib.context import CryptContext
 
-from app.auth.domain.user_model import ModelTokenData
+from app.auth.domain.user_model import ModelTokenData, ModelUserRegister
 from app.auth.services.user_service import Service as UserService
 from app.auth.util.jwt import create_access_token
-from errors import BadPassword, NotFoundUserEx
+from errors import BadPassword, NotFoundUserEx, DuplicateUserEx
 from infrastructure.db.schema.user import UserInfo
 
 
-def verify_password(plain_password: str, hashed_password: str) -> bool:
+async def set_hash_pawssowrd(password: str) -> str:
+    pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+    return pwd_context.hash(password)
+
+
+async def verify_password(plain_password: str, hashed_password: str) -> bool:
     pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
     try:
         return pwd_context.verify(plain_password, hashed_password)
@@ -62,7 +67,7 @@ async def authenticate(
     if not user_info:
         raise NotFoundUserEx()
     assert user_info.password, "password is invalid"
-    if not verify_password(user_passwd, user_info.password):
+    if not await verify_password(user_passwd, user_info.password):
         assert user_info.login_id, "login_id is None"
         raise NotFoundUserEx()
     assert user_info.login_id is not None, "login_id is None"
@@ -90,3 +95,14 @@ async def save_user_in_redis(
         ),
         ex=config["REDIS_EXPIRE_TIME"],
     )
+
+
+async def check_user(
+    user_info: ModelUserRegister,
+    user_service: UserService = Provide["auth.user_service"],
+) -> bool:
+    user_info: UserInfo | None = await user_service.get_one(login_id=user_info.login_id)
+    if not user_info:
+        return True
+    else:
+        raise DuplicateUserEx(user_id=user_info.login_id)

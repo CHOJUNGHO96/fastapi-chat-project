@@ -14,7 +14,7 @@ router = APIRouter()
 async def login(
     request: Request,
     form_data: OAuth2PasswordRequestForm = Depends(),
-):
+) -> JSONResponse:
     user_info = await authenticate(user_id=form_data.username, user_passwd=form_data.password)
     token_data: ModelTokenData = await get_token(request, user_info=user_info)
     await save_user_in_redis(user_info, token_data)

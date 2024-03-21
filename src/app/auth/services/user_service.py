@@ -1,8 +1,11 @@
 # coding=utf-8
-from dependency_injector.wiring import Provide, inject
+from typing import Tuple, Any, List, Dict
 
-import errors
+from dependency_injector.wiring import Provide, inject
+from sqlalchemy import Result, Row
+
 from app.auth.repository.user_repository import Repository as UserRepository
+from app.auth.domain.user_model import ModelUserRegister
 from infrastructure.db.schema.user import UserInfo
 
 
@@ -22,7 +25,13 @@ class Service:
             where.append(UserInfo.user_name == kwargs["user_name"])
         user_info: UserInfo = await user_repository.one(*where)
 
-        if not user_info:
-            raise errors.NotFoundUserEx()
+        return user_info
 
+    @inject
+    async def create_user(
+        self,
+        user_info: ModelUserRegister,
+        user_repository: UserRepository = Provide["auth.user_repository"],
+    ) -> list[dict[Any, Any]]:
+        user_info = await user_repository.create_user(user_info)
         return user_info
