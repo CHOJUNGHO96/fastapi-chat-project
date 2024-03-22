@@ -6,13 +6,14 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
 from starlette.middleware.base import BaseHTTPMiddleware
-
 from config import conf
 from container import Container
 from middleware import dispatch_middlewares
 from presentation import router
 from infrastructure.db.mongo import MongoDB
+from fastapi.templating import Jinja2Templates
 
+templates = Jinja2Templates(directory="templates")
 container = Container()
 config = conf()
 
@@ -58,7 +59,6 @@ def create_app(_config) -> FastAPI:
 
 
 app = create_app(config)
-
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="192.168.164.1", port=8080, reload=True, access_log=False)

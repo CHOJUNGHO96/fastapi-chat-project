@@ -1,12 +1,19 @@
 from dependency_injector.wiring import inject
 from fastapi import APIRouter, Depends, Request
+from fastapi.responses import HTMLResponse
 from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
-
+from fastapi.templating import Jinja2Templates
 from app.auth.domain.user_model import ModelTokenData
 from app.auth.usecase.authentication import authenticate, get_token, save_user_in_redis
 
 router = APIRouter()
+templates = Jinja2Templates(directory="templates")
+
+
+@router.get("/login", response_class=HTMLResponse)
+async def root(request: Request):
+    return templates.TemplateResponse(name="login.html", context={"request": request, "title": "Login"})
 
 
 @router.post("/login", response_model=ModelTokenData)
