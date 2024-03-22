@@ -6,7 +6,7 @@ from passlib.context import CryptContext
 from app.auth.domain.user_model import ModelTokenData, ModelUserRegister
 from app.auth.services.user_service import Service as UserService
 from app.auth.util.jwt import create_access_token
-from errors import BadPassword, NotFoundUserEx, DuplicateUserEx
+from errors import BadPassword, DuplicateUserEx, NotFoundUserEx
 from infrastructure.db.schema.user import UserInfo
 
 
@@ -29,7 +29,7 @@ async def get_token(
     user_info: UserInfo,
     config=Provide["config"],
 ) -> ModelTokenData:
-    request.state.user = user_info
+    request.state.user = user_info.to_dict()
     token_type = "bearer"
     access_token = create_access_token(
         jwt_secret_key=config["JWT_ACCESS_SECRET_KEY"],

@@ -1,11 +1,11 @@
-from dependency_injector.wiring import inject, Provide
+from dependency_injector.wiring import Provide, inject
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import JSONResponse
 from fastapi.templating import Jinja2Templates
+
 from app.auth.domain.user_model import ModelUserRegister
-from app.auth.usecase.authentication import check_user
 from app.auth.services.user_service import Service as UserService
-from app.auth.usecase.authentication import set_hash_pawssowrd
+from app.auth.usecase.authentication import check_user, set_hash_pawssowrd
 
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")

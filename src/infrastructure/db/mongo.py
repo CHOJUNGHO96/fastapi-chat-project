@@ -27,14 +27,11 @@ class MongoDB:
             self.mongo_url,
             maxPoolSize=self.mongo_max_connections,
             minPoolSize=self.mongo_min_connections,
-            )
-        self.__engine: AIOEngine = AIOEngine(
-            client=self.__client, database=self.mongo_db_name
-            )
+        )
+        self.__engine: AIOEngine = AIOEngine(client=self.__client, database=self.mongo_db_name)
 
     async def close(self):
         """
         Close MongoDB Connection
         """
         self.__client.close()
-

@@ -1,9 +1,9 @@
 from dependency_injector.wiring import inject
 from fastapi import APIRouter, Depends, Request
-from fastapi.responses import HTMLResponse
-from fastapi.responses import JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.templating import Jinja2Templates
+
 from app.auth.domain.user_model import ModelTokenData
 from app.auth.usecase.authentication import authenticate, get_token, save_user_in_redis
 

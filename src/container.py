@@ -4,15 +4,17 @@ from fastapi.requests import Request
 
 from app.auth.container import Container as AuthContainer
 from config import conf
+from infrastructure.db.mongo import MongoDB
 from infrastructure.db.redis import init_redis_pool
 from infrastructure.db.sqlalchemy import AsyncEngine
-from infrastructure.db.mongo import MongoDB
 from logs.log import LogAdapter
 
 
 class Container(containers.DeclarativeContainer):
     wiring_config = containers.WiringConfiguration(
         packages=[
+            # redis
+            "infrastructure.db.redis",
             # auth
             "app.auth.endpoint",
             "app.auth.usecase",

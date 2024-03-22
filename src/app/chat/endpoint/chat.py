@@ -1,10 +1,11 @@
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Request, Depends
+from dependency_injector.wiring import Provide, inject
+from fastapi import APIRouter, Depends, Request, WebSocket, WebSocketDisconnect
 from fastapi.templating import Jinja2Templates
-from dependency_injector.wiring import inject, Provide
-from infrastructure.db.mongo import MongoDB
-from app.chat.util.websocket_manager import ConnectionManager
-from infrastructure.db.schema.chat import ChatModel
+
 from app.chat.util.snow_flake import SnowflakeIdGenerator
+from app.chat.util.websocket_manager import ConnectionManager
+from infrastructure.db.mongo import MongoDB
+from infrastructure.db.schema.chat import ChatModel
 
 router = APIRouter()
 manager = ConnectionManager()
@@ -13,12 +14,13 @@ templates = Jinja2Templates(directory="templates")
 
 @router.get("/")
 async def root(request: Request):
-    return templates.TemplateResponse("chat.html", {"request": request})
+    login_id = request.state.user["login_id"]
+    return templates.TemplateResponse("chat.html", {"request": request, "login_id": login_id})
 
 
-@router.websocket("/ws/{client_id}")
+@router.websocket("/ws/{login_id}")
 @inject
-async def chat(websocket: WebSocket, client_id: int, mongodb: MongoDB = Depends(Provide["mongo"])):
+async def chat(websocket: WebSocket, client_id: str, mongodb: MongoDB = Depends(Provide["mongo"])):
     await manager.connect(websocket)
     try:
         while True:

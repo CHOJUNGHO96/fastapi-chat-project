@@ -3,9 +3,7 @@ import logging
 from contextlib import AbstractAsyncContextManager, asynccontextmanager
 from typing import AsyncIterator
 
-
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
-
 
 logger = logging.getLogger("query")
 

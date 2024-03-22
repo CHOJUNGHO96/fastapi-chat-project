@@ -1,5 +1,4 @@
 # coding=utf-8
-import json
 from typing import AsyncIterator
 
 from dependency_injector.wiring import Provide, inject
@@ -31,12 +30,12 @@ async def get_user_cahce(login_id: str, conf: get_config, redis=Provide["redis"]
     if cahce_user is None:
         await redis.set(
             name=f"cahce_user_info_{login_id}",
-            value=str(json.dumps(cahce_user)),
+            value=cahce_user,
             ex=conf["redis_expire_time"],
         )
         cahce_user = await redis.get(f"cahce_user_info_{login_id}")
     if isinstance(cahce_user, bytes):
         cahce_user = cahce_user.decode()
         return cahce_user
-    else:
-        return None
+    elif isinstance(cahce_user, str):
+        return cahce_user

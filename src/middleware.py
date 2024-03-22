@@ -1,3 +1,4 @@
+import ast
 import re
 import time
 
@@ -9,7 +10,13 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse
 
 from config import conf as get_config
-from errors import APIException, ExpireJwtToken, InternalSqlEx, NotAuthorization, NotFoundUserEx
+from errors import (
+    APIException,
+    ExpireJwtToken,
+    InternalSqlEx,
+    NotAuthorization,
+    NotFoundUserEx,
+)
 from infrastructure.db.redis import get_user_cahce
 from logs.log import LogAdapter
 
@@ -39,7 +46,7 @@ async def dispatch_middlewares(request: Request, call_next):
     url = request.url.path
 
     try:
-        if await url_pattern_check(url, "^(/docs|/redoc|/api/v1/auth|/api/v1/chat|/chat|/favicon.ico)") or url in [
+        if await url_pattern_check(url, "^(/docs|/redoc|/api/v1/auth)") or url in [
             "/",
             "/openapi.json",
         ]:
@@ -65,10 +72,11 @@ async def dispatch_middlewares(request: Request, call_next):
                     config["JWT_ACCESS_SECRET_KEY"],
                     algorithms=config["JWT_ALGORITHM"],
                 )
-                login_id: str | None = payload.get("sub")
+                login_id: str | None = payload.get("login_id")
                 if login_id is None:
                     raise NotAuthorization()
                 user_info = await get_user_cahce(login_id=login_id, conf=config)
+                request.state.user = ast.literal_eval(user_info)
                 if not user_info:
                     raise NotFoundUserEx()
             else:

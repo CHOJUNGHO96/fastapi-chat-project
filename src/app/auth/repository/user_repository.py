@@ -1,9 +1,10 @@
 # coding=utf-8
 from contextlib import AbstractAsyncContextManager
-from typing import Callable, Any
+from typing import Any, Callable
 
-from sqlalchemy import select, insert
+from sqlalchemy import insert, select
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.auth.domain.user_model import ModelUserRegister
 from errors import InternalQuerryEx
 from infrastructure.db.schema.user import UserInfo

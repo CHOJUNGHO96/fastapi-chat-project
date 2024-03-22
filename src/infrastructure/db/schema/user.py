@@ -1,4 +1,13 @@
-from sqlalchemy import DateTime, Index, Integer, PrimaryKeyConstraint, SmallInteger, Text, text
+from sqlalchemy import (
+    DateTime,
+    Index,
+    Integer,
+    PrimaryKeyConstraint,
+    SmallInteger,
+    Text,
+    inspect,
+    text,
+)
 from sqlalchemy.orm import mapped_column
 
 from .base import Base
@@ -19,3 +28,6 @@ class UserInfo(Base):
     email = mapped_column(Text)
     is_enable = mapped_column(SmallInteger, server_default=text("1"))
     reg_date = mapped_column(DateTime(True), server_default=text("now()"))
+
+    def to_dict(self):
+        return {c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs}

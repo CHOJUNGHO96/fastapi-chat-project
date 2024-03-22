@@ -1,3 +1,4 @@
+import ast
 import json
 import logging
 from datetime import datetime, timedelta
@@ -24,6 +25,8 @@ class LogAdapter:
         status_code = error.status_code if error else response.status_code
         error_log = None
         user: UserInfo = request.state.user if request.state.user else None
+        if isinstance(user, str):
+            user = ast.literal_eval(user)
 
         if error:
             if request.state.inspect:
@@ -41,11 +44,11 @@ class LogAdapter:
                 msg=str(error.ex),
             )
 
-        email = user.email.split("@") if user and user.email else None
+        email = user["email"].split("@") if user and user["email"] else None
         user_log = dict(
             client=request.state.ip,
-            user=user.login_id if user and user.login_id else None,
-            email=("**" + email[0][2:-1] + "*@" + email[1] if user and user.email else None),
+            user=user["login_id"] if user and user["login_id"] else None,
+            email=("**" + email[0][2:-1] + "*@" + email[1] if user and user["email"] else None),
         )
 
         log_dict = dict(

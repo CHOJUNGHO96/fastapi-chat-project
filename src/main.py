@@ -5,13 +5,14 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
+from fastapi.templating import Jinja2Templates
 from starlette.middleware.base import BaseHTTPMiddleware
+
 from config import conf
 from container import Container
+from infrastructure.db.mongo import MongoDB
 from middleware import dispatch_middlewares
 from presentation import router
-from infrastructure.db.mongo import MongoDB
-from fastapi.templating import Jinja2Templates
 
 templates = Jinja2Templates(directory="templates")
 container = Container()

@@ -1,11 +1,11 @@
 # coding=utf-8
-from typing import Tuple, Any, List, Dict
+from typing import Any, Dict, List, Tuple
 
 from dependency_injector.wiring import Provide, inject
 from sqlalchemy import Result, Row
 
-from app.auth.repository.user_repository import Repository as UserRepository
 from app.auth.domain.user_model import ModelUserRegister
+from app.auth.repository.user_repository import Repository as UserRepository
 from infrastructure.db.schema.user import UserInfo
 
 
