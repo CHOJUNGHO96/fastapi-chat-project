@@ -23,3 +23,13 @@ class Service:
         friend_info: list[dict[str, Any]] = await friendship_repository.get_select_friendship(*where)
 
         return friend_info
+
+    @inject
+    async def register_friendship(
+        self,
+        friendship_repository: FriendShipRepository = Provide["user.friend_ship_repository"],
+        **kwargs,
+    ) -> bool:
+        friend_info: bool = await friendship_repository.register_friendship(**kwargs)
+
+        return friend_info

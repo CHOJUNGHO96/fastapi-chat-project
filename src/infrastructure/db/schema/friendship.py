@@ -1,7 +1,7 @@
 from sqlalchemy import CheckConstraint, DateTime, ForeignKey, Integer, text
-from sqlalchemy.orm import declarative_base, mapped_column
+from sqlalchemy.orm import mapped_column
 
-Base = declarative_base()
+from .base import Base
 
 
 class Friendship(Base):

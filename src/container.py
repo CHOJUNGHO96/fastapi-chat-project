@@ -24,7 +24,6 @@ class Container(containers.DeclarativeContainer):
             "app.chat.endpoint",
             # user
             "app.user.endpoint",
-            "app.user.usecase",
             "app.user.services",
         ],
     )
