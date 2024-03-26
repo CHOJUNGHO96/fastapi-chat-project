@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from dependency_injector.wiring import Provide, inject
 from fastapi import APIRouter, Depends, Request, WebSocket, WebSocketDisconnect
 from fastapi.templating import Jinja2Templates
@@ -13,14 +15,26 @@ templates = Jinja2Templates(directory="templates")
 
 
 @router.get("/")
-async def root(request: Request):
-    login_id = request.state.user["login_id"]
-    return templates.TemplateResponse("chat.html", {"request": request, "login_id": login_id})
-
-
-@router.websocket("/ws/{login_id}")
 @inject
-async def chat(websocket: WebSocket, client_id: str, mongodb: MongoDB = Depends(Provide["mongo"])):
+async def root(request: Request, recive_client_id: str, mongodb: MongoDB = Depends(Provide["mongo"])):
+    login_id = request.state.user["login_id"]
+    chat_data = await mongodb.engine.find(
+        ChatModel,
+        ((ChatModel.message_from == login_id) & (ChatModel.message_to == recive_client_id))
+        | ((ChatModel.message_from == recive_client_id) & (ChatModel.message_to == login_id)),
+        sort=ChatModel.message_id.asc(),
+    )
+    return templates.TemplateResponse(
+        "chat.html",
+        {"request": request, "login_id": login_id, "recive_client_id": recive_client_id, "chat_data": chat_data},
+    )
+
+
+@router.websocket("/ws/{login_id}/{recive_client_id}")
+@inject
+async def chat(
+    websocket: WebSocket, login_id: str, recive_client_id: str, mongodb: MongoDB = Depends(Provide["mongo"])
+):
     await manager.connect(websocket)
     try:
         while True:
@@ -28,14 +42,14 @@ async def chat(websocket: WebSocket, client_id: str, mongodb: MongoDB = Depends(
             await mongodb.engine.save(
                 ChatModel(
                     message_id=SnowflakeIdGenerator(data_center_id=1, worker_id=1).next_id(),
-                    message_from=client_id,
-                    message_to=4186,
+                    message_from=login_id,
+                    message_to=recive_client_id,
                     content=data,
-                    created_at="2021-10-10 10:10:10",
+                    created_at=datetime.utcnow(),
                 )
             )
-            await manager.send_personal_message(f"You wrote: {data}", websocket)
-            await manager.broadcast(f"Client #{client_id} says: {data}")
+            # await manager.send_personal_message(f"{login_id}: {data}", websocket)
+            await manager.broadcast(f"{login_id}: {data}")
     except WebSocketDisconnect:
         manager.disconnect(websocket)
-        await manager.broadcast(f"Client #{client_id} left the chat")
+        await manager.broadcast(f"Client #{login_id} left the chat")

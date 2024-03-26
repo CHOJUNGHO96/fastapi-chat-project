@@ -20,7 +20,15 @@ async def friendship(
     friend_info = await friend_ship_service.get_select_friendship(
         friend_id=friend_id, user_id=request.state.user["user_id"]
     )
-    return templates.TemplateResponse(name="friendship.html", context={"request": request, "friend_info": friend_info})
+    return templates.TemplateResponse(
+        name="friendship.html",
+        context={
+            "request": request,
+            "user_name": request.state.user["user_name"],
+            "login_id": request.state.user["login_id"],
+            "friend_info": friend_info,
+        },
+    )
 
 
 @router.post("/friendship")
