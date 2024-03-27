@@ -9,7 +9,7 @@
 <body class="bg-gray-800 text-white">
     <div class="container mx-auto p-4">
         <div class="flex justify-between items-center mb-4">
-            <button onclick="goBack()" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-1 px-4 rounded focus:outline-none focus:shadow-outline mb-4">뒤로 가기</button>
+            <button onclick="logout()" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-1 px-4 rounded focus:outline-none focus:shadow-outline mb-4">로그아웃</button>
             <div>
                 <h1 class="text-3xl font-bold">로그인한 유저: {{ user_name }} ({{ login_id }})</h1>
             </div>
@@ -32,8 +32,20 @@
         </ul>
     </div>
     <script>
-        function goBack() {
-            window.history.back();
+        async function logout() {
+            const response = await fetch('/api/v1/auth/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+            });
+            if (response.ok) {
+                window.location.href = '/api/v1/auth/login';
+            } else {
+                // 로그아웃 실패 처리
+                alert('로그아웃에 실패했습니다.');
+            }
         }
         async function addFriend() {
             const friendLoginId = document.getElementById('friendLoginId').value;
@@ -55,10 +67,7 @@
         }
 
         async function openChat(reciveClientId) {
-            // 여기에 친구 클릭 시 채팅 페이지로 이동하는 로직을 추가합니다.
-            // 예를 들어, 채팅 페이지 URL을 '/chat'로 가정할 때:
             window.location.href = `http://192.168.164.1:5959/api/v1/chat/?recive_client_id=${reciveClientId}`;
-            // window.location.href = `api/v1/chat/?recive_client_id=${reciveClientId}`;
         }
     </script>
 </body>
