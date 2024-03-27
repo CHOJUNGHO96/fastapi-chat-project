@@ -26,31 +26,29 @@ async def verify_password(plain_password: str, hashed_password: str) -> bool:
 @inject
 async def get_token(
     request: Request,
-    user_info: UserInfo,
+    user_info: UserInfo | dict[str, str],
     config=Provide["config"],
 ) -> ModelTokenData:
-    request.state.user = user_info.to_dict()
+    request.state.user = user_info.to_dict() if isinstance(user_info, UserInfo) else user_info
     token_type = "bearer"
     access_token = create_access_token(
         jwt_secret_key=config["JWT_ACCESS_SECRET_KEY"],
         jwt_algorithm=config["JWT_ALGORITHM"],
-        user_id=user_info.user_id,
-        login_id=user_info.login_id,
-        user_name=user_info.user_name,
-        user_type=user_info.user_type,
+        user_id=int(request.state.user["user_id"]),
+        login_id=request.state.user["login_id"],
+        user_name=request.state.user["user_name"],
         expire=config["JWT_ACCESS_TOKEN_EXPIRE_MINUTES"],
     )
     refresh_token = create_access_token(
         jwt_secret_key=config["JWT_REFRESH_SECRET_KEY"],
         jwt_algorithm=config["JWT_ALGORITHM"],
-        user_id=user_info.user_id,
-        login_id=user_info.login_id,
-        user_name=user_info.user_name,
-        user_type=user_info.user_type,
+        user_id=int(request.state.user["user_id"]),
+        login_id=request.state.user["login_id"],
+        user_name=request.state.user["user_name"],
         expire=config["JWT_REFRESH_TOKEN_EXPIRE_MINUTES"],
     )
     return ModelTokenData(
-        user_id=user_info.user_id,
+        user_id=request.state.user["user_id"],
         token_type=token_type,
         access_token=access_token,
         refresh_token=refresh_token,
@@ -76,19 +74,20 @@ async def authenticate(
 
 @inject
 async def save_user_in_redis(
-    user_info: UserInfo,
+    user_info: UserInfo | dict[str, str],
     token_data: ModelTokenData,
     redis=Provide["redis"],
     config=Provide["config"],
 ) -> None:
+    user_info = user_info.to_dict() if isinstance(user_info, UserInfo) else user_info
     await redis.set(
-        name=f"cahce_user_info_{user_info.login_id}",
+        name=f"cahce_user_info_{user_info['login_id']}",
         value=str(
             {
-                "user_id": user_info.user_id,
-                "login_id": user_info.login_id,
-                "user_name": user_info.user_name,
-                "email": user_info.email,
+                "user_id": user_info["user_id"],
+                "login_id": user_info["login_id"],
+                "user_name": user_info["user_name"],
+                "email": user_info["email"],
                 "access_token": token_data.access_token,
                 "refresh_token": token_data.refresh_token,
             }

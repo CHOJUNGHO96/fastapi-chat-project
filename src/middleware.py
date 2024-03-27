@@ -10,13 +10,7 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse
 
 from config import conf as get_config
-from errors import (
-    APIException,
-    ExpireJwtToken,
-    InternalSqlEx,
-    NotAuthorization,
-    NotFoundUserEx,
-)
+from errors import APIException, ExpireJwtToken, InternalSqlEx, NotAuthorization, NotFoundUserEx
 from infrastructure.db.redis import get_user_cahce
 from logs.log import LogAdapter
 
@@ -46,7 +40,9 @@ async def dispatch_middlewares(request: Request, call_next):
     url = request.url.path
 
     try:
-        if await url_pattern_check(url, "^(/docs|/redoc|/api/v1/auth)") or url in [
+        if url == "/api/v1/auth/refresh_token":
+            pass
+        elif await url_pattern_check(url, "^(/docs|/redoc|/api/v1/auth)") or url in [
             "/",
             "/openapi.json",
         ]:
