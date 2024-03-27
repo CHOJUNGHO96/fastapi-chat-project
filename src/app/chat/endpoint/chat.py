@@ -4,10 +4,10 @@ from dependency_injector.wiring import Provide, inject
 from fastapi import APIRouter, Depends, Request, WebSocket, WebSocketDisconnect
 from fastapi.templating import Jinja2Templates
 
+from app.chat.domain.chat_model import ChatModel
 from app.chat.util.snow_flake import SnowflakeIdGenerator
 from app.chat.util.websocket_manager import ConnectionManager
 from infrastructure.db.mongo import MongoDB
-from infrastructure.db.schema.chat import ChatModel
 
 router = APIRouter()
 manager = ConnectionManager()
@@ -18,6 +18,7 @@ templates = Jinja2Templates(directory="templates")
 @inject
 async def root(request: Request, recive_client_id: str, mongodb: MongoDB = Depends(Provide["mongo"])):
     login_id = request.state.user["login_id"]
+    await mongodb.engine.configure_database([ChatModel])
     chat_data = await mongodb.engine.find(
         ChatModel,
         ((ChatModel.message_from == login_id) & (ChatModel.message_to == recive_client_id))
@@ -48,7 +49,6 @@ async def chat(
                     created_at=datetime.utcnow(),
                 )
             )
-            # await manager.send_personal_message(f"{login_id}: {data}", websocket)
             await manager.broadcast(f"{login_id}: {data}")
     except WebSocketDisconnect:
         manager.disconnect(websocket)
