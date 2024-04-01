@@ -3,6 +3,7 @@ from dependency_injector import containers, providers
 from fastapi.requests import Request
 
 from app.auth.container import Container as AuthContainer
+from app.chat.container import Container as ChatContainer
 from app.user.container import Container as UserContainer
 from config import conf
 from infrastructure.db.mongo import MongoDB
@@ -47,4 +48,5 @@ class Container(containers.DeclarativeContainer):
     mongo = providers.Resource(MongoDB, config=config)
 
     auth = providers.Container(AuthContainer, db=db)
+    chat = providers.Container(ChatContainer, db=db)
     user = providers.Container(UserContainer, db=db)

@@ -1,8 +1,7 @@
 # coding=utf-8
-from typing import Any, Dict, List, Tuple
+from typing import Any
 
 from dependency_injector.wiring import Provide, inject
-from sqlalchemy import Result, Row
 
 from app.auth.domain.user_model import ModelUserRegister
 from app.auth.repository.user_repository import Repository as UserRepository
