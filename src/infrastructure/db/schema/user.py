@@ -1,13 +1,4 @@
-from sqlalchemy import (
-    DateTime,
-    Index,
-    Integer,
-    PrimaryKeyConstraint,
-    SmallInteger,
-    Text,
-    inspect,
-    text,
-)
+from sqlalchemy import DateTime, Index, Integer, PrimaryKeyConstraint, SmallInteger, Text, inspect, text
 from sqlalchemy.orm import mapped_column
 
 from .base import Base
@@ -26,6 +17,7 @@ class UserInfo(Base):
     user_name = mapped_column(Text)
     password = mapped_column(Text)
     email = mapped_column(Text)
+    status = mapped_column(SmallInteger, server_default=text("1"))
     is_enable = mapped_column(SmallInteger, server_default=text("1"))
     reg_date = mapped_column(DateTime(True), server_default=text("now()"))
 
