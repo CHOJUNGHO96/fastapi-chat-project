@@ -28,7 +28,7 @@
             window.history.back();
         }
         // 서버로부터 받은 login_id를 사용하여 WebSocket 연결을 설정합니다.
-        var ws = new WebSocket(`ws://192.168.164.1:5959/api/v1/chat/ws/${'{{ login_id }}'}/${'{{ recive_client_id }}'}/${'{{ room_id }}'}`);
+        var ws = new WebSocket(`ws://127.0.0.1:5959/api/v1/chat/ws/${'{{ login_id }}'}/${'{{ recive_client_id }}'}/${'{{ room_id }}'}`);
         ws.onmessage = function(event) {
             var messages = document.getElementById('messages')
             var message = document.createElement('li')
