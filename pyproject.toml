@@ -16,6 +16,7 @@ readme = "README.md"
 version = "0.1.0"
 
 [tool.poetry.dependencies]
+alembic = "^1.13.1"
 asyncpg = "^0.29.0"
 bcrypt = "^4.1.2"
 black = "^23.12.0"
