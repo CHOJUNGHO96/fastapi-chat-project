@@ -8,9 +8,68 @@
 ![Static Badge](https://img.shields.io/badge/MongoDb-%2347A248)
 ![Static Badge](https://img.shields.io/badge/Dependency_Injector-blue)
 ![Static Badge](https://img.shields.io/badge/Poetry-%2360A5FA)
+![Static Badge](https://img.shields.io/badge/Gunicorn-%23499848)
+![Static Badge](https://img.shields.io/badge/Docker-%232496ED)
+![Static Badge](https://img.shields.io/badge/JwtToken-red)
 
-파이썬 Fastapi프레임워크를 기반으로 Fastapi공식문서에 나온 웹소켓 기능과 Dependency_Injector라이브러리를 활용하여 웹채팅서비스 구축하였습니다.
-채팅내역 저장은MongDb를 사용하고 나머지 상태저장은 Postgresql을 사용했습니다.
+## 해당프로젝트 상세내용
+#### 1. 파이썬 Fastapi프레임워크를 기반으로 Fastapi공식문서에 나온 웹소켓 기능과 Dependency_Injector라이브러리를 활용하여 웹채팅서비스 구축하였습니다.<br>
+#### FastApi웹소켓 공식문서 참고 URL : https://fastapi.tiangolo.com/ko/advanced/websockets/#handling-disconnections-and-multiple-clients
+#### 2. 채팅내역 저장은MongDb를 사용하고 나머지 상태저장은 Postgresql을 사용했습니다.
+#### 3. 각채팅의 메세지ID는 Snowflake알고리즘을 사용하여 순서가 보장되고 유니크한값으로 설정했습니다.
+#### 4. 나와 상대방의 채팅방 구분은 friend_ship라는 테이블에 각각 상대방과 나의기본키가 교차로 들어가서 교차된row의 pk값을 더해서 구분해준다.<br>
+#### ex : 19번유저와 21번유저의 구분값은 아래에 나와있는 friendship_id의 합친값인 47이된다.<br>
+![image](https://github.com/CHOJUNGHO96/fastapi-chat-project/assets/61762674/c1b479b8-eadf-4974-8168-833f408b7642)
+#### 5. 기존공식문서 예제에는 웹소켓에 접속한 사용자들 전부 채팅을 공유했는데 나와 상대방만 채팅방을 공유하도록 ConnectionManager에 dict형태로 room_id를 키값을 추가하여 수정했습니다.<br>
+### 공식문서코드
+```py
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections: list[WebSocket] = []
+
+    async def connect(self, websocket: WebSocket):
+        await websocket.accept()
+        self.active_connections.append(websocket)
+
+    def disconnect(self, websocket: WebSocket):
+        self.active_connections.remove(websocket)
+
+    async def send_personal_message(self, message: str, websocket: WebSocket):
+        await websocket.send_text(message)
+
+    async def broadcast(self, message: str):
+        for connection in self.active_connections:
+            await connection.send_text(message)
+```
+### 수정한 코드 (src/app/chat/util/websocket_manager.py)
+```py
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections: Dict[int, List[WebSocket]] = {}
+
+    async def connect(self, room_id: int, websocket: WebSocket):
+        if room_id not in self.active_connections:
+            self.active_connections[room_id] = []
+        self.active_connections[room_id].append(websocket)
+        await websocket.accept()
+
+    def disconnect(self, room_id: int, websocket: WebSocket):
+        self.active_connections[room_id].remove(websocket)
+        if not self.active_connections[room_id]:
+            del self.active_connections[room_id]
+
+    async def send_personal_message(self, message: str, websocket: WebSocket):
+        await websocket.send_text(message)
+
+    async def broadcast(self, room_id: int, message: str):
+        for connection in self.active_connections.get(room_id, []):
+            await connection.send_text(message)
+
+```
+#### 6. precommit을 사용하여 commit시 자동으로 black, flake8, toml-sort, isort 실행되도록해서 유효성검사 추가하였습니다.
+#### 7. docker cpmpose를 이용하여 명령어입력하면 자동으로 빌드되도록 추가하였습니다.
+#### 8. 마이그레이션을위한 alembic 추가하였습니다.
+#### 9. ui구현을위해 chat gpt4를 활용하여 html파일 생성하였습니다.
 
 ![](../header.png)
 
