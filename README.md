@@ -29,8 +29,16 @@ winodws 기준
 4. 쉘에접속후 마이그레이션을 하기위해 ```/fastapi-chat-project/src```경로로 가서 alembic upgrade head 명령어 실행해준다</br>
 ex
 ![image](https://github.com/CHOJUNGHO96/fastapi-chat-project/assets/61762674/0eb9e01d-ed79-41d1-ad04-89433089440b)
-5. ```http://127.0.0.1:5051/api/v1/auth/login```로 접속하여 ui가 잘나오는지 확인한다.<br>
+5. ```http://127.0.0.1:5051/api/v1/auth/login```로 접속하여 ui가 잘나오는지확인및 회원가입및 친구추가하고 채팅기능이 잘동작하는지 확인<br>
+### 로그인 화면<br>
 ![image](https://github.com/CHOJUNGHO96/fastapi-chat-project/assets/61762674/458b9eb6-7dc0-4ad0-9e3c-89ffe1b0354f)
+### 회원가입 화면<br>
+![image](https://github.com/CHOJUNGHO96/fastapi-chat-project/assets/61762674/e3342bf8-6079-4e4d-9b23-48aabeb8a42b)
+### 친구목록 화면<br>
+![image](https://github.com/CHOJUNGHO96/fastapi-chat-project/assets/61762674/ea8cfff9-c578-4cd1-9ddf-1e20fbe1be23)
+### 채팅방 화면<br>
+![image](https://github.com/CHOJUNGHO96/fastapi-chat-project/assets/61762674/b57494ad-985e-421f-bf86-816264b37d5c)
+
 
 
 ## 업데이트 내역
