@@ -5,9 +5,11 @@ from fastapi.templating import Jinja2Templates
 
 from app.user.domain.friendship_model import ModelFriendShipRequestRegister
 from app.user.services.friendship_service import Service as FriendShipService
+from config import conf
 
 router = APIRouter()
-templates = Jinja2Templates(directory="templates")
+config = conf()
+templates = Jinja2Templates(directory=config.TEMPLATE_DIR)
 
 
 @router.get("/friendship", response_class=HTMLResponse)

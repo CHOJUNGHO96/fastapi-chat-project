@@ -8,11 +8,13 @@ from app.chat.domain.chat_model import ChatModel
 from app.chat.services.friendship_service import Service as FriendShipService
 from app.chat.util.snow_flake import SnowflakeIdGenerator
 from app.chat.util.websocket_manager import ConnectionManager
+from config import conf
 from infrastructure.db.mongo import MongoDB
 
 router = APIRouter()
 manager = ConnectionManager()
-templates = Jinja2Templates(directory="templates")
+config = conf()
+templates = Jinja2Templates(directory=config.TEMPLATE_DIR)
 
 
 @router.get("/")

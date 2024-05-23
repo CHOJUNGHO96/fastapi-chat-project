@@ -26,7 +26,7 @@
             var user_name = document.getElementById('user_name').value;
 
             try {
-                const response = await fetch('http://127.0.0.1:5959/api/v1/auth/register', {
+                const response = await fetch('http://127.0.0.1:5051/api/v1/auth/register', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -37,7 +37,7 @@
                 });
 
                 if (response.ok) {
-                    window.location.href = 'http://127.0.0.1:5959/api/v1/auth/login';
+                    window.location.href = 'http://127.0.0.1:5051/api/v1/auth/login';
                 } else {
                     throw new Error('회원가입 실패');
                 }

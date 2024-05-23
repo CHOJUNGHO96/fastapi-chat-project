@@ -6,9 +6,11 @@ from fastapi.templating import Jinja2Templates
 
 from app.auth.domain.user_model import ModelTokenData
 from app.auth.usecase.authentication import authenticate, get_token, save_user_in_redis
+from config import conf
 
 router = APIRouter()
-templates = Jinja2Templates(directory="templates")
+config = conf()
+templates = Jinja2Templates(directory=config.TEMPLATE_DIR)
 
 
 @router.get("/login", response_class=HTMLResponse, include_in_schema=False)

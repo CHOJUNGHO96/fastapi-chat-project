@@ -2,8 +2,11 @@ from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 from fastapi.templating import Jinja2Templates
 
+from config import conf
+
 router = APIRouter()
-templates = Jinja2Templates(directory="templates")
+config = conf()
+templates = Jinja2Templates(directory=config.TEMPLATE_DIR)
 
 
 @router.post("/logout")

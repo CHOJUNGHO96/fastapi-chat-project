@@ -50,6 +50,8 @@ class Config(BaseSettings):
     SQLALCHEMY_DATABASE_URI: PostgresDsn | None = None
     SQLALCHEMY_TEST_DATABASE_URI: PostgresDsn | None = None
 
+    TEMPLATE_DIR: str = "/fastapi-chat-project/src/templates"
+
     # noinspection PyMethodParameters
     @field_validator("SQLALCHEMY_DATABASE_URI")
     def assemble_db_connection(cls, v: str | None, values: FieldValidationInfo) -> Any:

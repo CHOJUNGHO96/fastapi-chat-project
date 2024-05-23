@@ -1,0 +1,73 @@
+version: '3.8'
+services:
+  fastapi1:
+    build:
+      context: ..
+      dockerfile: src/Dockerfile
+    environment:
+      - JWT_ALGORITHM=${JWT_ALGORITHM}
+      - JWT_ACCESS_SECRET_KEY=${JWT_ACCESS_SECRET_KEY}
+      - JWT_ACCESS_TOKEN_EXPIRE_MINUTES=${JWT_ACCESS_TOKEN_EXPIRE_MINUTES}
+      - JWT_REFRESH_SECRET_KEY=${JWT_REFRESH_SECRET_KEY}
+      - JWT_REFRESH_TOKEN_EXPIRE_MINUTES=${JWT_REFRESH_TOKEN_EXPIRE_MINUTES}
+      - POSTGRES_SERVER=${POSTGRES_SERVER}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_SERVER=${REDIS_SERVER}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_EXPIRE_TIME=${REDIS_EXPIRE_TIME}
+      - MONGO_DB_NAME=${MONGO_DB_NAME}
+      - MONGO_URL=${MONGO_URL}
+      - MONGO_MAX_CONNECTIONS=${MONGO_MAX_CONNECTIONS}
+      - MONGO_MIN_CONNECTIONS=${MONGO_MIN_CONNECTIONS}
+    depends_on:
+      - postgres
+      - redis
+      - mongo
+    ports:
+      - "5051:5959"
+    networks:
+      - my_network
+
+  postgres:
+    image: postgres:15
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - my_network
+
+  redis:
+    image: redis:latest
+    command: redis-server --requirepass redis!123
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - my_network
+
+  mongo:
+     image: mongo:latest
+     restart: always
+     ports:
+       - 27017:27017
+     volumes:
+       - /home/ubun2/mongodb/data:/data
+     environment:
+       - MONGO_INITDB_ROOT_USERNAME=root
+       - MONGO_INITDB_ROOT_PASSWORD=root
+
+volumes:
+  postgres_data:
+  redis_data:
+networks:
+  my_network:

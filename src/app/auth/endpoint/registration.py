@@ -6,9 +6,11 @@ from fastapi.templating import Jinja2Templates
 from app.auth.domain.user_model import ModelUserRegister
 from app.auth.services.user_service import Service as UserService
 from app.auth.usecase.authentication import check_user, set_hash_pawssowrd
+from config import conf
 
 router = APIRouter()
-templates = Jinja2Templates(directory="templates")
+config = conf()
+templates = Jinja2Templates(directory=config.TEMPLATE_DIR)
 
 
 @router.get("/register", include_in_schema=False)
