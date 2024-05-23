@@ -71,6 +71,8 @@ class ConnectionManager:
 #### 8. 마이그레이션을위한 alembic 추가하였습니다.
 #### 9. ui구현을위해 chat gpt4를 활용하여 html파일 생성하였습니다.
 #### 10. jwt token을 사용하여 사용자인증 구현 하였습니다.
+#### 11. orm을 사용하기위해 sqlalchemy2.x 와 mongodb는 odmantic라이브러리 사용하였습니다.
+#### 12. 유저정보 캐시에저장하기위해 redis 사용하였습니다.
 
 ![](../header.png)
 
