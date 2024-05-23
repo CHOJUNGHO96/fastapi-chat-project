@@ -15,6 +15,7 @@
 ## 해당프로젝트 상세내용
 #### 1. 파이썬 Fastapi프레임워크를 기반으로 Fastapi공식문서에 나온 웹소켓 기능과 Dependency_Injector라이브러리를 활용하여 웹채팅서비스 구축하였습니다.<br>
 #### FastApi웹소켓 공식문서 참고 URL : https://fastapi.tiangolo.com/ko/advanced/websockets/#handling-disconnections-and-multiple-clients
+#### dependency-injector 공식문서 URL : https://python-dependency-injector.ets-labs.org/
 #### 2. 채팅내역 저장은MongDb를 사용하고 나머지 상태저장은 Postgresql을 사용했습니다.
 #### 3. 각채팅의 메세지ID는 Snowflake알고리즘을 사용하여 순서가 보장되고 유니크한값으로 설정했습니다.
 #### 4. 나와 상대방의 채팅방 구분은 friend_ship라는 테이블에 각각 상대방과 나의기본키가 교차로 들어가서 교차된row의 pk값을 더해서 구분해준다.<br>
